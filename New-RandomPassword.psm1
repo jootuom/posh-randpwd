@@ -1,24 +1,25 @@
 Function New-RandomPassword {
-	Param(
-		[Parameter()]
-		[ValidateRange(8,20)]
-		[int] $Length = 8
-	)
-	
-	$set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray()
-	
-	do {
-		$res = ""
-	
-		while ($res.Length -lt $Length) {
-			$res += $set | Get-Random
-		}
-	# 8-20 chars, one capital, one lower and a number
-	} until ($res -cmatch "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$")
-	
-	Write-Verbose ("Password: {0}" -f $res)
-	
-	return $res
+    Param(
+        [Parameter()]
+        [int] $Length = 12
+    )
+
+    $set = (
+        "abcdefghijklmnopqrstuvwxyz" +
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+        "0123456789"
+    ).ToCharArray()
+
+    # require one lower, one upper, one number
+    $complexity = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"
+
+    do {
+        $result = ($set | Get-Random -Count $length) -join ""
+    } until ($result -cmatch $complexity)
+
+    Write-Verbose ("Password: {0}" -f $res)
+
+    return $result
 }
 
 Export-ModuleMember New-RandomPassword
